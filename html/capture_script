@@ -1,0 +1,47 @@
+#!/bin/bash
+
+tcpdump -ne -c 2000 > packets
+
+# Filter the packets and save to respective files
+grep -E "Flags|ack" packets > TCP
+grep "UDP" packets > UDP
+grep "ARP" packets > ARP
+
+#components of udp packets
+cut -d ' ' -f 1 UDP > udp_Timestamp
+cut -d ' ' -f 2 UDP > udp_Src_macAdd
+cut -d ' ' -f 4 UDP | cut -d ',' -f 1 > udp_Desti_macAdd
+cut -d ',' -f 2 UDP | cut -d ' ' -f 3 > udp_Ethertype
+cut -d ' ' -f 9 UDP |cut -d ':' -f 1 > udp_packetlength
+cut -d ' ' -f 10 UDP |cut -d '.' -f 1-4 | cut -d ':' -f 1 > udp_SrcIP_add
+cut -d ' ' -f 10 UDP |cut -d '.' -f 5 | cut -d ':' -f 1> udp_Srcport
+cut -d ' ' -f 10 UDP |cut -d '.' -f 1-4 > udp_DestiIP_add
+cut -d ' ' -f 10 UDP |cut -d '.' -f 5 | cut -d ':' -f 1 > udp_Destiport
+cut -d ' ' -f 13 UDP | cut -d ',' -f 1 > udp_Protocol
+cut -d ' ' -f 15 UDP > udp_DataLength 
+
+#components of arp packets
+cut -d ' ' -f 1 ARP > arp_timestamp
+cut -d ' ' -f 2 ARP > arp_srcMAC_add
+cut -d ' ' -f 4 ARP | cut -d ',' -f 1 > arp_destiMAC_add
+cut -d ' ' -f 9 ARP |cut -d ':' -f 1 > arp_framelength
+cut -d ' ' -f 14 ARP | cut -d ',' -f 1 > arp_srcIPadd
+cut -d ' ' -f 12 ARP > arp_destIPadd
+cut -d ' ' -f 16  ARP | cut -d ':' -f1 > arp_packetlength
+cut -d ' ' -f7  ARP | cut -d ',' -f1 > arp_ethertype
+
+#component of tcp packets 
+
+cut -d ' ' -f 1 TCP > tcp_timestamp
+cut -d ' ' -f 2 TCP > tcp_srcmac_add
+cut -d ' ' -f 4 TCP|cut -d ',' -f 1 > tcp_destmac_add
+cut -d ' ' -f 6 TCP > tcp_ethertype
+cut -d ' ' -f 9 TCP |cut -d ':' -f 1 > tcp_packetlength
+cut -d ' ' -f 10 TCP | cut -d '.' -f 1-4 > tcp_srcip_add
+cut -d ' ' -f 10 TCP | cut -d '.' -f 5 | cut -d ':' -f 1 > tcp_srcport
+cut -d ' ' -f 12 TCP | cut -d '.' -f 1-4 > tcp_destip_add
+cut -d ' ' -f 12 TCP | cut -d '.' -f 5 | cut -d ':' -f 1 > tcp_destiport
+
+
+
+

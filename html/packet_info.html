@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packet Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+      .radio-button {
+            margin-bottom: 30px; /* Increased margin between each radio button and label */
+        }
+        .radio-button label {
+            font-size: 30px;
+        }
+        .radio-button input[type="radio"] {
+            transform: scale(1.5);
+            margin-right: 10px;
+        }
+        .dropdown-menu {
+            width: 250px;
+            font-size: 16px;
+            padding: 10px;
+            margin: 0 auto; /* Center the dropdown menu */
+        }
+        .btn-submit-button {
+            font-size: 20px; /* Increase font size of submit button */
+            padding: 13px 30px; /* Increased padding for larger button */
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Packet Information</h2>
+
+<div class="top-bar">
+    <div class="radio-buttons">
+        <input type="radio" id="arpradio" name="protocol" value="arp">
+        <label for="arpradio" style="font-size: 20px;">ARP</label>
+        
+        <input type="radio" id="tcpradio" name="protocol" value="tcp">
+        <label for="tcpradio" style="font-size: 20px;">TCP</label>
+        
+        <input type="radio" id="udpradio" name="protocol" value="udp">
+        <label for="udpradio" style="font-size: 20px;">UDP</label>
+    </div>
+
+    <select id="optionsSelect" class="dropdown-menu" name="data-type">
+        <option value="">Select Data Type</option>
+        <!-- Options will be dynamically populated here -->
+    </select>
+</div>
+
+<button id="submitButton" class="btn-submit-button">Submit</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const protocolRadios = document.querySelectorAll('input[name="protocol"]');
+        const dropdown = document.getElementById('optionsSelect');
+        const dataOptions = {
+            arp: ["arp_timestamp", "arp_srcMAC_add", "arp_destiMAC_add", "arp_framelength", "arp_srcIP", "arp_destIPadd", "arp_packetlength", "arp_ethertype", "all"],
+            tcp: ["tcp_timestamp", "tcp_srcmac_add", "tcp_destmac_add", "tcp_ethertype", "tcp_packetlength", "tcp_srcip_add", "tcp_srcport", "tcp_destip_add", "tcp_destiport", "all"],
+            udp: ["udp_Timestamp", "udp_Src_macAdd", "udp_Desti_macAdd", "udp_Ethertype", "udp_packetlength", "udp_SrcIP_add", "udp_Srcport", "udp_DestiIP_add", "udp_Destiport", "udp_Protocol", "udp_DataLength", "all"]
+        };
+
+        protocolRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                populateDropdown(this.value);
+            });
+        });
+
+        function populateDropdown(protocol) {
+            dropdown.innerHTML = ''; // Clear existing options
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Select Data Type";
+            dropdown.appendChild(defaultOption);
+
+            if (dataOptions[protocol]) {
+                dataOptions[protocol].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option;
+                    opt.textContent = option;
+                    dropdown.appendChild(opt);
+                });
+            }
+        }
+
+        document.getElementById('submitButton').addEventListener('click', function() {
+            const selectedProtocol = document.querySelector('input[name="protocol"]:checked');
+            const selectedOption = dropdown.value;
+
+            // Validate if both protocol and data-type are selected
+            if (selectedProtocol && selectedOption) {
+                // Open a new window/tab with the fetched data
+                const url = `get_packet_info.php?option=${encodeURIComponent(selectedOption)}&protocol=${encodeURIComponent(selectedProtocol.value)}`;
+                window.open(url, '_blank');
+            } else {
+                alert('Please select both a protocol and a data type.');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
